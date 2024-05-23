@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import BoardCard from './../BoardCard/BoardCard.vue'
-import type { IBoardTask } from '@/entities/Board/api/service'
+import type { IBoardTask } from '@/entities/Board/interfaces.ts'
 
 const props = defineProps<{
   title: string

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IBoardTask } from '@/entities/Board/api/service'
+import type { IBoardTask } from '@/entities/Board/interfaces.ts'
 
 defineProps<{
   task: IBoardTask

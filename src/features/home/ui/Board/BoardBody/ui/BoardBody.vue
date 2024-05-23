@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted } from 'vue'
 import BoardColumn from './../BoardColumn/BoardColumn.vue'
 import { api } from '@/entities/Board/api/service'
-import type { IBoardTask } from '@/entities/Board/api/service'
+
+import { useBoardStore } from '@/entities/Board/model/stores'
 
 const tabs = ['To Do', 'In Progress', 'Done']
 
-const tasks = ref<IBoardTask[] | null>(null)
+const boardStore = useBoardStore()
 
 onMounted(async () => {
-  tasks.value = await api.getListTasks()
+  await api.getListTasks()
 })
+
+const tasks = computed(() => boardStore.tasks)
 </script>
 
 <template>
