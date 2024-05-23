@@ -1,0 +1,11 @@
+@import './styles/reset';
+@import './styles/fonts';
+@import './styles/variables';
+@import 'primeicons/primeicons.css';
+
+#app {
+  width: 100%;
+  display: flex;
+  gap: 35px;
+  font-family: var(--main-font-family);
+}
