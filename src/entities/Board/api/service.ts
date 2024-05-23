@@ -1,36 +1,46 @@
 import { databases } from '@/shared/lib/appwrite/appwrite'
-import type { Models } from 'appwrite'
+import type { IBoardTask } from '../interfaces'
+import { useBoardStore } from '../model/stores'
+import { useSessionStore } from '@/entities/Session/model/stores'
 
 export const api = {
-  getListTasks
+  getListTasks,
+  updateTask
 }
 
 const DATABASE_ID = '664e065d000234f179ee'
 const COLLECTION_ID = '664e066c002e13322bd5'
 
-export interface IBoardTask extends Models.Document {
-  title: string
-  subtitle: string
-  description: string
-  subtasks: String[]
-  status: string
-  endDate: string
-}
-
-async function getListTasks(): Promise<IBoardTask[] | null> {
+async function getListTasks(): Promise<void> {
+  const boardStore = useBoardStore()
   try {
-    const documents = await databases.listDocuments(DATABASE_ID, COLLECTION_ID)
-    return documents.documents.map((document) => ({
-      ...document,
-      title: document.title,
-      subtitle: document.subtitle,
-      description: document.description,
-      subtasks: document.subtasks,
-      status: document.status,
-      endDate: document.endDate
-    }))
+    const { documents } = await databases.listDocuments(DATABASE_ID, COLLECTION_ID)
+    boardStore.tasks = documents as IBoardTask[]
   } catch (error) {
     console.log(error)
-    return null
+  }
+}
+
+async function updateTask(documentId: string, updatedDocument: IBoardTask): Promise<void> {
+  const sessionStore = useSessionStore()
+  const boardStore = useBoardStore()
+  try {
+    const document = await databases.updateDocument(
+      DATABASE_ID,
+      COLLECTION_ID,
+      documentId,
+      updatedDocument,
+      [`read('${sessionStore.user?.$id}')`]
+    )
+    if (boardStore.tasks) {
+      boardStore.tasks = [
+        document as IBoardTask,
+        ...boardStore.tasks.filter((task) => task.$id !== documentId)
+      ]
+    } else {
+      boardStore.tasks = [document as IBoardTask]
+    }
+  } catch (error) {
+    console.log(error)
   }
 }
