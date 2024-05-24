@@ -1,10 +1,16 @@
 <script setup lang="ts">
+import { api } from '@/entities/Board/api/service'
 import type { IBoardTask } from '@/entities/Board/interfaces.ts'
 import HamburgerDropdown from '@/shared/ui/dropdowns/HamburgerDropdown.vue'
 
-defineProps<{
+const props = defineProps<{
   task: IBoardTask
 }>()
+
+const moveTaskToAnotherColumn = async (tab: string) => {
+  const updatedTask = { status: tab }
+  await api.updateTask(props.task.$id, updatedTask)
+}
 </script>
 
 <template>
@@ -14,7 +20,10 @@ defineProps<{
         <h2>{{ task.title }}</h2>
         <h3 v-if="task.subtitle">{{ task.subtitle }}</h3>
       </div>
-      <HamburgerDropdown :status="task.status" />
+      <HamburgerDropdown
+        :status="task.status"
+        @move-task-to-another-column="moveTaskToAnotherColumn"
+      />
     </header>
     <div :class="$style.progress">
       <span>Progress</span>
@@ -45,6 +54,7 @@ defineProps<{
   padding: 20px;
   border: 2px solid rgba(28, 29, 34, 0.06);
   border-radius: 12px;
+  cursor: pointer;
 
   header {
     display: flex;

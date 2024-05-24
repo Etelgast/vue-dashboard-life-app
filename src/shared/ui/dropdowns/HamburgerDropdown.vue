@@ -5,6 +5,8 @@ const props = defineProps<{
   status: string
 }>()
 
+defineEmits(['move-task-to-another-column'])
+
 const tabs = ['To Do', 'In Progress', 'Done']
 
 const isDropdownActive = ref<boolean>(false)
@@ -31,7 +33,12 @@ const handleClickOutside = () => {
       <li>Delete task</li>
       <li class="item-move" @click="toggleSubmenu">Move to</li>
       <ul class="move__list" :class="{ active: isSubmenuActive }">
-        <li v-for="tab in tabs" :key="tab" :class="{ inactive: props.status === tab }">
+        <li
+          v-for="tab in tabs"
+          :key="tab"
+          :class="{ inactive: props.status === tab }"
+          @click="$emit('move-task-to-another-column', tab)"
+        >
           {{ tab }}
         </li>
       </ul>

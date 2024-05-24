@@ -5,7 +5,8 @@ import { useSessionStore } from '@/entities/Session/model/stores'
 
 export const api = {
   getListTasks,
-  updateTask
+  updateTask,
+  deleteTask
 }
 
 const DATABASE_ID = '664e065d000234f179ee'
@@ -21,16 +22,14 @@ async function getListTasks(): Promise<void> {
   }
 }
 
-async function updateTask(documentId: string, updatedDocument: IBoardTask): Promise<void> {
-  const sessionStore = useSessionStore()
+async function updateTask(documentId: string, updatedDocument: Partial<IBoardTask>): Promise<void> {
   const boardStore = useBoardStore()
   try {
     const document = await databases.updateDocument(
       DATABASE_ID,
       COLLECTION_ID,
       documentId,
-      updatedDocument,
-      [`read('${sessionStore.user?.$id}')`]
+      updatedDocument
     )
     if (boardStore.tasks) {
       boardStore.tasks = [
@@ -40,6 +39,16 @@ async function updateTask(documentId: string, updatedDocument: IBoardTask): Prom
     } else {
       boardStore.tasks = [document as IBoardTask]
     }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+async function deleteTask(documentId: string) {
+  const boardStore = useBoardStore()
+  try {
+    const response = await databases.deleteDocument(DATABASE_ID, COLLECTION_ID, documentId)
+    console.log(response)
   } catch (error) {
     console.log(error)
   }
