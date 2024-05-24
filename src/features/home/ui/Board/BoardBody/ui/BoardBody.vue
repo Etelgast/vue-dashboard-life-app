@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import BoardColumn from './../BoardColumn/BoardColumn.vue'
+import { computed, onMounted, ref } from 'vue'
 import { api } from '@/entities/Board/api/service'
+import BoardColumn from './../BoardColumn/BoardColumn.vue'
+import BoardCardModal from './../BoardCardModal/BoardCardModal.vue'
 
 import { useBoardStore } from '@/entities/Board/model/stores'
 
 const tabs = ['To Do', 'In Progress', 'Done']
+const isBoardCardModalOpen = ref<boolean>(false)
+
+const toggleBoardCardModal = () => {
+  isBoardCardModalOpen.value = !isBoardCardModalOpen.value
+}
 
 const boardStore = useBoardStore()
 
@@ -18,8 +24,18 @@ const tasks = computed(() => boardStore.tasks)
 
 <template>
   <section :class="$style.board">
-    <BoardColumn v-for="tab in tabs" :key="tab" :title="tab" :tasks="tasks" :tab="tab" />
+    <BoardColumn
+      v-for="tab in tabs"
+      :key="tab"
+      :title="tab"
+      :tasks="tasks"
+      :tab="tab"
+      @toggle-modal="toggleBoardCardModal"
+    />
   </section>
+  <Teleport to="#app">
+    <BoardCardModal v-if="isBoardCardModalOpen" @toggle-modal="toggleBoardCardModal" />
+  </Teleport>
 </template>
 
 <style lang="scss" module>
