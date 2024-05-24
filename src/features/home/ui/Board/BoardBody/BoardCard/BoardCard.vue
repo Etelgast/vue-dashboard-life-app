@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { api } from '@/entities/Board/api/service'
-import type { IBoardTask } from '@/entities/Board/interfaces.ts'
+import type { IBoardTask } from '@/entities/Board/interfaces'
 import HamburgerDropdown from '@/shared/ui/dropdowns/HamburgerDropdown.vue'
 
 const props = defineProps<{
