@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { IBoardTask } from '@/entities/Board/interfaces.ts'
+import HamburgerDropdown from '@/shared/ui/dropdowns/HamburgerDropdown.vue'
 
 defineProps<{
   task: IBoardTask
@@ -9,8 +10,11 @@ defineProps<{
 <template>
   <article :class="$style.card">
     <header>
-      <h2>{{ task.title }}</h2>
-      <h3 v-if="task.subtitle">{{ task.subtitle }}</h3>
+      <div>
+        <h2>{{ task.title }}</h2>
+        <h3 v-if="task.subtitle">{{ task.subtitle }}</h3>
+      </div>
+      <HamburgerDropdown :status="task.status" />
     </header>
     <div :class="$style.progress">
       <span>Progress</span>
@@ -44,14 +48,19 @@ defineProps<{
 
   header {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
 
-    h2 {
-      font-weight: 600;
-    }
+    div {
+      display: flex;
+      flex-direction: column;
 
-    h3 {
-      color: var(--gray-color);
+      h2 {
+        font-weight: 600;
+      }
+
+      h3 {
+        color: var(--gray-color);
+      }
     }
   }
 
