@@ -8,8 +8,10 @@ import { useBoardStore } from '@/entities/Board/model/stores'
 
 const tabs = ['To Do', 'In Progress', 'Done']
 const isBoardCardModalOpen = ref<boolean>(false)
+const selectedColumn = ref<string>('')
 
-const toggleBoardCardModal = () => {
+const toggleBoardCardModal = (tab: string) => {
+  selectedColumn.value = tab
   isBoardCardModalOpen.value = !isBoardCardModalOpen.value
 }
 
@@ -34,7 +36,11 @@ const tasks = computed(() => boardStore.tasks)
     />
   </section>
   <Teleport to="#app">
-    <BoardCardModal v-if="isBoardCardModalOpen" @toggle-modal="toggleBoardCardModal" />
+    <BoardCardModal
+      v-if="isBoardCardModalOpen"
+      @toggle-modal="toggleBoardCardModal"
+      :selected-column="selectedColumn"
+    />
   </Teleport>
 </template>
 

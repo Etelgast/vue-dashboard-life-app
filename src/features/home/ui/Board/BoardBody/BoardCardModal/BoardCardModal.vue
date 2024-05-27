@@ -1,5 +1,21 @@
 <script setup lang="ts">
+import { reactive, ref } from 'vue'
+import type { IBoardTask } from '@/entities/Board/interfaces'
+
+const props = defineProps<{
+  selectedColumn: string
+}>()
+
 defineEmits(['toggle-modal'])
+
+const task: Partial<IBoardTask> = reactive({
+  title: '',
+  subtitle: '',
+  description: '',
+  subtasks: [],
+  status: props.selectedColumn,
+  endDate: ''
+})
 </script>
 
 <template>
@@ -10,9 +26,42 @@ defineEmits(['toggle-modal'])
         <span @click="$emit('toggle-modal')"></span>
       </header>
       <form action="">
-        <input type="text" name="title" placeholder="title" />
-        <input type="text" name="subtitle" placeholder="subtitle" />
-        <textarea placeholder="description"></textarea>
+        <div>
+          <label for="title">Title</label>
+          <input
+            type="text"
+            name="title"
+            id="title"
+            placeholder="Do something great"
+            v-model="task.title"
+          />
+        </div>
+        <div>
+          <label for="subtitle">Subtitle</label>
+          <input
+            type="text"
+            name="subtitle"
+            placeholder="And little thing"
+            v-model="task.subtitle"
+          />
+        </div>
+        <div>
+          <label for="description">Add description</label>
+          <textarea
+            name="description"
+            id="description"
+            placeholder="..."
+            v-model="task.description"
+          ></textarea>
+        </div>
+        <div>
+          <label for="subtask">Add subtask</label>
+          <input type="text" name="substask" id="subtask" placeholder="..." />
+        </div>
+        <div>
+          <label for="date">Choose end date for your task</label>
+          <input type="date" name="date" id="date" v-model="task.endDate" />
+        </div>
       </form>
     </div>
   </div>
@@ -46,6 +95,11 @@ defineEmits(['toggle-modal'])
     align-items: center;
     justify-content: space-between;
 
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
     span {
       position: relative;
       width: 25px;
@@ -64,11 +118,6 @@ defineEmits(['toggle-modal'])
     }
   }
 
-  h1 {
-    font-size: 20px;
-    font-weight: 600;
-  }
-
   form {
     display: flex;
     flex-direction: column;
@@ -76,6 +125,7 @@ defineEmits(['toggle-modal'])
 
     input,
     textarea {
+      margin-top: 5px;
       width: 100%;
       padding: 10px;
       border: 1px solid #ded2d9;
