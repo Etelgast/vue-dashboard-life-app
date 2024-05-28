@@ -49,8 +49,12 @@ async function updateTask(documentId: string, updatedDocument: Partial<IBoardTas
 async function deleteTask(documentId: string) {
   const boardStore = useBoardStore()
   try {
-    const response = await databases.deleteDocument(DATABASE_ID, COLLECTION_ID, documentId)
-    console.log(response)
+    await databases.deleteDocument(DATABASE_ID, COLLECTION_ID, documentId)
+    if (boardStore.tasks) {
+      boardStore.tasks = boardStore.tasks.filter((task) => task.$id !== documentId)
+    } else {
+      boardStore.tasks = []
+    }
   } catch (error) {
     console.log(error)
   }

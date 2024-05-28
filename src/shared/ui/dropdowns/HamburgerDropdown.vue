@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { api } from '@/entities/Board/api/service'
+
+const { deleteTask } = api
 
 const props = defineProps<{
   status: string
+  id: string
 }>()
 
 defineEmits(['move-task-to-another-column'])
@@ -30,7 +34,7 @@ const handleClickOutside = () => {
   <div class="hamburger-dropdown" v-click-outside="handleClickOutside">
     <button type="button" @click="toggleDropdownMenu"></button>
     <ul class="hamburger-dropdown__list" :class="{ active: isDropdownActive }">
-      <li>Delete task</li>
+      <li @click="deleteTask(id)">Delete task</li>
       <li class="item-move" @click="toggleSubmenu">Move to</li>
       <ul class="move__list" :class="{ active: isSubmenuActive }">
         <li
@@ -76,6 +80,10 @@ const handleClickOutside = () => {
 
   &.active {
     visibility: visible;
+  }
+
+  & > li:first-child {
+    background-color: rgba(255, 0, 0, 0.8);
   }
 
   li {

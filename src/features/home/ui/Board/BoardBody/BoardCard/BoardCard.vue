@@ -22,6 +22,7 @@ const moveTaskToAnotherColumn = async (tab: string) => {
       </div>
       <HamburgerDropdown
         :status="task.status"
+        :id="task.$id"
         @move-task-to-another-column="moveTaskToAnotherColumn"
       />
     </header>
