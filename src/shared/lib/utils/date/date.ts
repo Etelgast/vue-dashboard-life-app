@@ -29,3 +29,11 @@ export function getCurrentDate(): ICurrentDate {
 
   return { day, monthName, monthNumber, year }
 }
+
+export function formatDate(date: Date): ICurrentDate {
+  const day = date.getDate()
+  const monthNumber = date.getMonth()
+  const monthName = MONTH_NAMES[monthNumber]
+  const year = date.getFullYear()
+  return { day, monthName, monthNumber, year }
+}

@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import { api } from '@/entities/Board/api/service'
+import { computed } from 'vue'
 import type { IBoardTask } from '@/entities/Board/interfaces'
+
+import { api } from '@/entities/Board/api/service'
+import { formatDate } from '@/shared/lib/utils/date/date'
+
 import HamburgerDropdown from '@/shared/ui/dropdowns/HamburgerDropdown.vue'
 
 const props = defineProps<{
@@ -11,6 +15,20 @@ const moveTaskToAnotherColumn = async (tab: string) => {
   const updatedTask = { status: tab }
   await api.updateTask(props.task.$id, updatedTask)
 }
+
+const taskProgress = computed(() => {
+  const doneSubtasks = props.task.subtasks.filter((subtask) => subtask.is_done).length
+  const totalSubtasks = props.task.subtasks.length
+  return {
+    counter: `${doneSubtasks}/${totalSubtasks}`,
+    progress: Math.ceil((doneSubtasks / totalSubtasks) * 100)
+  }
+})
+
+const endTaskDate = computed(() => {
+  const { day, monthName, year } = formatDate(new Date(props.task.endDate))
+  return day + ' ' + monthName + ' ' + year
+})
 </script>
 
 <template>
@@ -18,7 +36,7 @@ const moveTaskToAnotherColumn = async (tab: string) => {
     <header>
       <div>
         <h2>{{ task.title }}</h2>
-        <h3 v-if="task.subtitle">{{ task.subtitle }}</h3>
+        <h3>{{ task.subtitle ? task.subtitle : '' }}</h3>
       </div>
       <HamburgerDropdown
         :status="task.status"
@@ -28,13 +46,16 @@ const moveTaskToAnotherColumn = async (tab: string) => {
     </header>
     <div :class="$style.progress">
       <span>Progress</span>
-      <span>7/10</span>
+      <span>{{ taskProgress.counter }}</span>
     </div>
-    <div :class="$style.bar">
-      <progress max="100" value="15"></progress>
-    </div>
+    <div
+      :class="$style.bar"
+      :style="{
+        '--progress-width': `${taskProgress.progress}%`
+      }"
+    ></div>
     <footer>
-      <button>{{ task.endDate }}</button>
+      <button>{{ endTaskDate }}</button>
       <div>
         <div>
           <span>7</span>
@@ -109,11 +130,8 @@ const moveTaskToAnotherColumn = async (tab: string) => {
       top: 0;
       left: 0;
       height: 100%;
-      width: 75%;
+      width: var(--progress-width);
       background: turquoise;
-    }
-    progress {
-      opacity: 0;
     }
   }
 
