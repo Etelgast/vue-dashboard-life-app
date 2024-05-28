@@ -20,7 +20,7 @@ const filteredTasks = computed(() => {
   <div :class="$style.column">
     <div>
       <span>{{ title }} ()</span>
-      <button type="button" @click="$emit('toggle-modal', tab)">Add new task</button>
+      <button type="button" @click="$emit('toggle-modal')">Add new task</button>
     </div>
     <BoardCard v-for="task in filteredTasks" :key="task.$id" :task="task" />
   </div>

@@ -2,26 +2,20 @@
 import { computed, onMounted, ref } from 'vue'
 import { api } from '@/entities/Board/api/service'
 import BoardColumn from './../BoardColumn/BoardColumn.vue'
-import BoardCardModal from './../BoardCardModal/BoardCardModal.vue'
 
 import { useBoardStore } from '@/entities/Board/model/stores'
 
-const tabs = ['To Do', 'In Progress', 'Done']
-const isBoardCardModalOpen = ref<boolean>(false)
-const selectedColumn = ref<string>('')
+defineEmits(['toggle-modal'])
 
-const toggleBoardCardModal = (tab: string) => {
-  selectedColumn.value = tab
-  isBoardCardModalOpen.value = !isBoardCardModalOpen.value
-}
+const tabs = ['To Do', 'In Progress', 'Done']
 
 const boardStore = useBoardStore()
+
+const tasks = computed(() => boardStore.tasks)
 
 onMounted(async () => {
   await api.getListTasks()
 })
-
-const tasks = computed(() => boardStore.tasks)
 </script>
 
 <template>
@@ -32,16 +26,9 @@ const tasks = computed(() => boardStore.tasks)
       :title="tab"
       :tasks="tasks"
       :tab="tab"
-      @toggle-modal="toggleBoardCardModal"
+      @toggle-modal="$emit('toggle-modal', tab)"
     />
   </section>
-  <Teleport to="#app">
-    <BoardCardModal
-      v-if="isBoardCardModalOpen"
-      @toggle-modal="toggleBoardCardModal"
-      :selected-column="selectedColumn"
-    />
-  </Teleport>
 </template>
 
 <style lang="scss" module>
