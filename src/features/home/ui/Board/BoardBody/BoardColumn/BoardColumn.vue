@@ -14,12 +14,16 @@ defineEmits(['toggle-modal'])
 const filteredTasks = computed(() => {
   return props.tasks?.filter((task) => task.status === props.tab)
 })
+
+const taskCounter = computed(() => {
+  return props.tasks?.filter((task) => task.status === props.tab).length
+})
 </script>
 
 <template>
   <div :class="$style.column">
     <div>
-      <span>{{ title }} ()</span>
+      <span>{{ title }} ({{ taskCounter }})</span>
       <button type="button" @click="$emit('toggle-modal')">Add new task</button>
     </div>
     <BoardCard v-for="task in filteredTasks" :key="task.$id" :task="task" />
