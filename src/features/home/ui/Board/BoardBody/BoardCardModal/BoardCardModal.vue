@@ -35,18 +35,17 @@ const currentFillingSubtask = ref<string>('')
 
 const addNewSubtask = () => {
   if (task.subtasks) {
-    const newSubtask: IBoardSubTask = {
-      id: task.subtasks.length,
+    const newSubtask: Partial<IBoardSubTask> = {
       description: currentFillingSubtask.value
     }
-    task.subtasks.push(newSubtask)
+    task.subtasks.push(newSubtask as IBoardSubTask)
     currentFillingSubtask.value = ''
   }
 }
 
-const removeAddedSubtask = (id: number) => {
+const removeAddedSubtask = (index: number) => {
   if (task.subtasks) {
-    task.subtasks.splice(id, 1)
+    task.subtasks.splice(index, 1)
   }
 }
 
@@ -105,13 +104,9 @@ const createNewTask = async () => {
           <i class="pi pi-plus-circle" style="font-size: 1.2rem" @click="addNewSubtask"></i>
         </div>
         <div class="subtask-wrapper__added">
-          <div v-for="subtask in task.subtasks" :key="subtask.id">
+          <div v-for="(subtask, index) in task.subtasks" :key="index">
             <input type="text" value="subtask.description" v-model="subtask.description" />
-            <i
-              class="pi pi-trash"
-              style="font-size: 1.2rem"
-              @click="removeAddedSubtask(subtask.id)"
-            ></i>
+            <i class="pi pi-trash" style="font-size: 1.2rem" @click="removeAddedSubtask(index)"></i>
           </div>
         </div>
         <div>

@@ -9,7 +9,7 @@ export interface IBoardTask extends Models.Document {
   endDate: string
 }
 
-export interface IBoardSubTask {
-  id: number
+export interface IBoardSubTask extends Models.Document {
   description: string
+  is_done: boolean
 }
