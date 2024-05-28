@@ -22,6 +22,7 @@ const isNavigationAndHeaderVisible = computed((): boolean => !!sessionStore.user
 main {
   width: 100%;
   height: 100vh;
-  padding: 30px 25px;
+  padding-block: 30px;
+  padding-inline: 35px 45px;
 }
 </style>

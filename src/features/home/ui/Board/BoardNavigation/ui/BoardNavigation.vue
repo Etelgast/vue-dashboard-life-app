@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import ButtonAction from '@/shared/ui/buttons/ButtonAction.vue'
+
+defineEmits(['toggle-modal'])
 </script>
 
 <template>
@@ -8,7 +10,7 @@ import ButtonAction from '@/shared/ui/buttons/ButtonAction.vue'
     <div>
       <button type="button">Filter</button>
       <button type="button">Sort</button>
-      <ButtonAction>Add new task</ButtonAction>
+      <ButtonAction @click="$emit('toggle-modal', 'To Do')">Add new task</ButtonAction>
     </div>
   </nav>
 </template>

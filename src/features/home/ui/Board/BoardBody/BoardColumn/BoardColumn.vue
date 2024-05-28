@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import BoardCard from './../BoardCard/BoardCard.vue'
-import type { IBoardTask } from '@/entities/Board/api/service'
+import type { IBoardTask } from '@/entities/Board/interfaces.ts'
 
 const props = defineProps<{
   title: string
@@ -9,16 +9,22 @@ const props = defineProps<{
   tab: string
 }>()
 
+defineEmits(['toggle-modal'])
+
 const filteredTasks = computed(() => {
   return props.tasks?.filter((task) => task.status === props.tab)
+})
+
+const taskCounter = computed(() => {
+  return props.tasks?.filter((task) => task.status === props.tab).length
 })
 </script>
 
 <template>
   <div :class="$style.column">
     <div>
-      <span>{{ title }} ()</span>
-      <button type="button">Add new task</button>
+      <span>{{ title }} ({{ taskCounter }})</span>
+      <button type="button" @click="$emit('toggle-modal')">Add new task</button>
     </div>
     <BoardCard v-for="task in filteredTasks" :key="task.$id" :task="task" />
   </div>
