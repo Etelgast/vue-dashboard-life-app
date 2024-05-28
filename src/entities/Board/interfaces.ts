@@ -4,7 +4,12 @@ export interface IBoardTask extends Models.Document {
   title: string
   subtitle: string
   description: string
-  subtasks: String[]
+  subtasks: IBoardSubTask[]
   status: string
   endDate: string
+}
+
+export interface IBoardSubTask {
+  id: number
+  description: string
 }

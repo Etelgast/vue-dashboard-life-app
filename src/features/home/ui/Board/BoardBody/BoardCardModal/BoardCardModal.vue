@@ -1,12 +1,26 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import type { IBoardTask } from '@/entities/Board/interfaces'
+import type { IBoardTask, IBoardSubTask } from '@/entities/Board/interfaces'
+
+import * as yup from 'yup'
+import { Form, Field, ErrorMessage } from 'vee-validate'
+import { api } from '@/entities/Board/api/service'
+
+import ButtonSubmit from '@/shared/ui/buttons/ButtonSubmit.vue'
 
 const props = defineProps<{
   selectedColumn: string
 }>()
 
-defineEmits(['toggle-modal'])
+const emit = defineEmits(['toggle-modal'])
+
+const schema = yup.object().shape({
+  title: yup.string().max(30).required(),
+  subtitle: yup.string().max(35),
+  description: yup.string().max(350),
+  subtask: yup.string().max(35),
+  date: yup.string().required()
+})
 
 const task: Partial<IBoardTask> = reactive({
   title: '',
@@ -16,6 +30,30 @@ const task: Partial<IBoardTask> = reactive({
   status: props.selectedColumn,
   endDate: ''
 })
+
+const currentFillingSubtask = ref<string>('')
+
+const addNewSubtask = () => {
+  if (task.subtasks) {
+    const newSubtask: IBoardSubTask = {
+      id: task.subtasks.length,
+      description: currentFillingSubtask.value
+    }
+    task.subtasks.push(newSubtask)
+    currentFillingSubtask.value = ''
+  }
+}
+
+const removeAddedSubtask = (id: number) => {
+  if (task.subtasks) {
+    task.subtasks.splice(id, 1)
+  }
+}
+
+const createNewTask = async () => {
+  await api.addNewTask(task)
+  emit('toggle-modal')
+}
 </script>
 
 <template>
@@ -25,20 +63,21 @@ const task: Partial<IBoardTask> = reactive({
         <h1>Add new task</h1>
         <span @click="$emit('toggle-modal')"></span>
       </header>
-      <form action="">
+      <Form name="add-new-task" :validation-schema="schema" @submit="createNewTask">
         <div>
           <label for="title">Title</label>
-          <input
+          <Field
             type="text"
             name="title"
             id="title"
             placeholder="Do something great"
             v-model="task.title"
           />
+          <ErrorMessage name="title" />
         </div>
         <div>
           <label for="subtitle">Subtitle</label>
-          <input
+          <Field
             type="text"
             name="subtitle"
             placeholder="And little thing"
@@ -50,19 +89,38 @@ const task: Partial<IBoardTask> = reactive({
           <textarea
             name="description"
             id="description"
-            placeholder="..."
+            placeholder="Add a description to clarify your task"
             v-model="task.description"
           ></textarea>
         </div>
-        <div>
+        <div class="subtask-wrapper">
           <label for="subtask">Add subtask</label>
-          <input type="text" name="substask" id="subtask" placeholder="..." />
+          <Field
+            type="text"
+            name="subtask"
+            id="subtask"
+            placeholder="Add subtasks to decompose your task"
+            v-model="currentFillingSubtask"
+          />
+          <i class="pi pi-plus-circle" style="font-size: 1.2rem" @click="addNewSubtask"></i>
+        </div>
+        <div class="subtask-wrapper__added">
+          <div v-for="subtask in task.subtasks" :key="subtask.id">
+            <input type="text" value="subtask.description" v-model="subtask.description" />
+            <i
+              class="pi pi-trash"
+              style="font-size: 1.2rem"
+              @click="removeAddedSubtask(subtask.id)"
+            ></i>
+          </div>
         </div>
         <div>
           <label for="date">Choose end date for your task</label>
-          <input type="date" name="date" id="date" v-model="task.endDate" />
+          <Field type="date" name="date" id="date" v-model="task.endDate" />
+          <ErrorMessage name="date" />
         </div>
-      </form>
+        <ButtonSubmit>Add a new task</ButtonSubmit>
+      </Form>
     </div>
   </div>
 </template>
@@ -84,7 +142,7 @@ const task: Partial<IBoardTask> = reactive({
   flex-direction: column;
   gap: 15px;
   margin: auto;
-  width: 550px;
+  width: 40vw;
   padding: 15px 20px;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   background-color: #fff;
@@ -130,6 +188,44 @@ const task: Partial<IBoardTask> = reactive({
       padding: 10px;
       border: 1px solid #ded2d9;
       border-radius: 5px;
+    }
+
+    textarea {
+      height: 200px;
+      resize: none;
+    }
+
+    & > div span {
+      display: block;
+      margin-top: 3px;
+      font-size: 14px;
+      color: red;
+
+      &::first-letter {
+        text-transform: uppercase;
+      }
+    }
+
+    .subtask-wrapper {
+      position: relative;
+
+      i {
+        position: absolute;
+        top: 55%;
+        right: 10px;
+        cursor: pointer;
+      }
+    }
+
+    .subtask-wrapper__added div {
+      position: relative;
+
+      i {
+        position: absolute;
+        top: 40%;
+        right: 10px;
+        cursor: pointer;
+      }
     }
   }
 }

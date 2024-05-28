@@ -2,11 +2,13 @@ import { databases } from '@/shared/lib/appwrite/appwrite'
 import type { IBoardTask } from '../interfaces'
 import { useBoardStore } from '../model/stores'
 import { useSessionStore } from '@/entities/Session/model/stores'
+import { ID, Permission, Role } from 'appwrite'
 
 export const api = {
   getListTasks,
   updateTask,
-  deleteTask
+  deleteTask,
+  addNewTask
 }
 
 const DATABASE_ID = '664e065d000234f179ee'
@@ -49,6 +51,20 @@ async function deleteTask(documentId: string) {
   try {
     const response = await databases.deleteDocument(DATABASE_ID, COLLECTION_ID, documentId)
     console.log(response)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+async function addNewTask(task: Partial<IBoardTask>): Promise<void> {
+  const boardStore = useBoardStore()
+  try {
+    const document = await databases.createDocument(DATABASE_ID, COLLECTION_ID, ID.unique(), task)
+    if (boardStore.tasks) {
+      boardStore.tasks = [document as IBoardTask, ...boardStore.tasks]
+    } else {
+      boardStore.tasks = [document as IBoardTask]
+    }
   } catch (error) {
     console.log(error)
   }
