@@ -72,7 +72,7 @@ const handleClickOutside = () => {
   visibility: hidden;
   position: absolute;
   top: 30px;
-  left: 0;
+  right: 150px;
 
   &.active {
     visibility: visible;
