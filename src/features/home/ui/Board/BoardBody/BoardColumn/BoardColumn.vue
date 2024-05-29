@@ -7,6 +7,7 @@ const props = defineProps<{
   title: string
   tasks: IBoardTask[] | null
   draggingOverZone: string
+  isLoading: boolean
 }>()
 
 const draggedTask = defineModel()
@@ -32,21 +33,26 @@ const handleStartDragCard = (id: string, currentStatus: string) => {
       <span>{{ title }} ({{ taskCounter }})</span>
       <button type="button" @click="$emit('toggle-modal')">Add new task</button>
     </div>
-    <BoardCard
-      v-for="task in filteredTasks"
-      :key="task.$id"
-      :task="task"
-      draggable="true"
-      @start-drag="handleStartDragCard"
-    />
-    <div
-      v-if="draggedTask !== null && draggedTask !== title"
-      :class="$style.drag"
-      :style="
-        draggingOverZone === title ? { boxShadow: '6px 20px 36px 0 rgba(28, 29, 34, 0.1)' } : {}
-      "
-    >
-      Drag your task here...
+    <div v-if="isLoading" style="text-align: center">
+      <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
+    </div>
+    <div v-else>
+      <BoardCard
+        v-for="task in filteredTasks"
+        :key="task.$id"
+        :task="task"
+        draggable="true"
+        @start-drag="handleStartDragCard"
+      />
+      <div
+        v-if="draggedTask !== null && draggedTask !== title"
+        :class="$style.drag"
+        :style="
+          draggingOverZone === title ? { boxShadow: '6px 20px 36px 0 rgba(28, 29, 34, 0.1)' } : {}
+        "
+      >
+        Drag your task here...
+      </div>
     </div>
   </div>
 </template>

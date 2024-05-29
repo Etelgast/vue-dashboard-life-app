@@ -10,18 +10,21 @@ defineEmits(['toggle-modal'])
 const tabs = ['To Do', 'In Progress', 'Done']
 const draggedTaskStatus = ref<string | null>(null)
 const draggingOverZone = ref<string>('')
+const isLoading = ref<boolean>(false)
 
 const boardStore = useBoardStore()
 
 const tasks = computed(() => boardStore.tasks)
 
 const onDropCard = async (event: DragEvent, tab: string) => {
+  isLoading.value = true
   if (event.dataTransfer) {
     const cardId = event.dataTransfer.getData('cardId')
     const updatedCard = { status: tab }
     await api.updateTask(cardId, updatedCard)
     draggedTaskStatus.value = null
   }
+  isLoading.value = false
 }
 
 const handleDragOver = (tab: string) => {
@@ -34,7 +37,9 @@ const handleDragEnd = () => {
 }
 
 onMounted(async () => {
+  isLoading.value = true
   await api.getListTasks()
+  isLoading.value = false
 })
 </script>
 
@@ -46,6 +51,7 @@ onMounted(async () => {
       :title="tab"
       :tasks="tasks"
       :dragging-over-zone="draggingOverZone"
+      :is-loading="isLoading"
       v-model="draggedTaskStatus"
       @toggle-modal="$emit('toggle-modal', tab)"
       @dragover.prevent="handleDragOver(tab)"
