@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRef, toValue, unref } from 'vue'
+import { computed } from 'vue'
 import type { IBoardTask } from '@/entities/Board/interfaces'
 
 import { api } from '@/entities/Board/api/service'
