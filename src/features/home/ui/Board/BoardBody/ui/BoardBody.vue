@@ -8,10 +8,30 @@ import { useBoardStore } from '@/entities/Board/model/stores'
 defineEmits(['toggle-modal'])
 
 const tabs = ['To Do', 'In Progress', 'Done']
+const draggedTaskStatus = ref<string | null>(null)
+const draggingOverZone = ref<string>('')
 
 const boardStore = useBoardStore()
 
 const tasks = computed(() => boardStore.tasks)
+
+const onDropCard = async (event: DragEvent, tab: string) => {
+  if (event.dataTransfer) {
+    const cardId = event.dataTransfer.getData('cardId')
+    const updatedCard = { status: tab }
+    await api.updateTask(cardId, updatedCard)
+    draggedTaskStatus.value = null
+  }
+}
+
+const handleDragOver = (tab: string) => {
+  draggingOverZone.value = tab
+}
+
+const handleDragEnd = () => {
+  draggingOverZone.value = ''
+  draggedTaskStatus.value = null
+}
 
 onMounted(async () => {
   await api.getListTasks()
@@ -25,8 +45,12 @@ onMounted(async () => {
       :key="tab"
       :title="tab"
       :tasks="tasks"
-      :tab="tab"
+      :dragging-over-zone="draggingOverZone"
+      v-model="draggedTaskStatus"
       @toggle-modal="$emit('toggle-modal', tab)"
+      @dragover.prevent="handleDragOver(tab)"
+      @dragend.prevent="handleDragEnd"
+      @drop="onDropCard($event, tab)"
     />
   </section>
 </template>
