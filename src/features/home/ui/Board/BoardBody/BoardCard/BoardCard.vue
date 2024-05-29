@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, toRef, toValue, unref } from 'vue'
 import type { IBoardTask } from '@/entities/Board/interfaces'
 
 import { api } from '@/entities/Board/api/service'
-import { formatDate } from '@/shared/lib/utils/date/date'
+import CardDateButton from './CardDateButton/CardDateButton.vue'
 
 import HamburgerDropdown from '@/shared/ui/dropdowns/HamburgerDropdown.vue'
 
@@ -25,13 +25,9 @@ const taskProgress = computed(() => {
   const totalSubtasks = props.task.subtasks.length
   return {
     counter: `${doneSubtasks}/${totalSubtasks}`,
-    progress: Math.ceil((doneSubtasks / totalSubtasks) * 100)
+    progress: Math.ceil((doneSubtasks / totalSubtasks) * 100),
+    color: doneSubtasks === totalSubtasks ? '#78d700' : '#ffa048'
   }
-})
-
-const endTaskDate = computed(() => {
-  const { day, monthName, year } = formatDate(new Date(props.task.endDate))
-  return day + ' ' + monthName + ' ' + year
 })
 
 const startDrag = (event: DragEvent, item: string, currentStatus: string) => {
@@ -64,11 +60,12 @@ const startDrag = (event: DragEvent, item: string, currentStatus: string) => {
     <div
       :class="$style.bar"
       :style="{
-        '--progress-width': `${taskProgress.progress}%`
+        '--progress-width': `${taskProgress.progress}%`,
+        '--progress-color': `${taskProgress.color}`
       }"
     ></div>
     <footer>
-      <button>{{ endTaskDate }}</button>
+      <CardDateButton :end-date="task.endDate" />
       <div>
         <div>
           <span>7</span>

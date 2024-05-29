@@ -61,19 +61,12 @@
       left: 0;
       height: 100%;
       width: var(--progress-width);
-      background: turquoise;
+      background-color: var(--progress-color);
     }
   }
 
   footer {
     color: var(--gray-color);
-
-    button {
-      font-weight: 700;
-      border-radius: 17px;
-      padding: 8px 16px;
-      background: rgba(136, 141, 167, 0.1);
-    }
 
     div {
       display: flex;
