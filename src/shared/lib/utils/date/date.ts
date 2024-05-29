@@ -20,16 +20,6 @@ interface ICurrentDate {
   year: number
 }
 
-export function getCurrentDate(): ICurrentDate {
-  const currentDate = new Date()
-  const day = currentDate.getDate()
-  const monthNumber = currentDate.getMonth()
-  const monthName = MONTH_NAMES[monthNumber]
-  const year = currentDate.getFullYear()
-
-  return { day, monthName, monthNumber, year }
-}
-
 export function formatDate(date: Date): ICurrentDate {
   const day = date.getDate()
   const monthNumber = date.getMonth()

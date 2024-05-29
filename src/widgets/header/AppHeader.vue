@@ -3,16 +3,15 @@ import { computed, onMounted, ref } from 'vue'
 import router from '@/app/router'
 import { api } from '@/entities/Session/api'
 import { useSessionStore } from '@/entities/Session/model/stores'
-import { getCurrentDate } from '@/shared/lib/utils/date/date'
+import { formatDate } from '@/shared/lib/utils/date/date'
 
 const avatar = ref()
 
 const sessionStore = useSessionStore()
 
 const renderCurrentDate = computed(() => {
-  const { day, monthName, year } = getCurrentDate()
-  const date = day + ' ' + monthName + ' ' + year
-  return date
+  const { day, monthName, year } = formatDate(new Date())
+  return day + ' ' + monthName + ' ' + year
 })
 
 const renderUserName = computed(() => {
